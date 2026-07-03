@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.pyo
+*.pyd
+
+# Environment
+.env
+.venv/
+venv/
+env/
+ENV/
+
+# Trained models (large binary files)
+models/*.pth
+models/*.bin
+models/*.safetensors
+models/indicbert_fraud/
+models/efficientnet_currency.pth
+
+# Dataset directories
+data/currency_dataset/
+data/*.csv
+data/*.parquet
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Logs
+*.log
+logs/
