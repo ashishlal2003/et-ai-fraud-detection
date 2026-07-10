@@ -243,17 +243,6 @@ with st.sidebar:
         unsafe_allow_html=True,
     )
 
-    st.divider()
-
-    openai_key_input = st.text_input(
-        "OpenAI API Key (optional)",
-        type="password",
-        placeholder="sk-...",
-        help="Required for GPT-4.1 explanations. Leave blank for rule-based fallback.",
-    )
-    if openai_key_input:
-        os.environ["OPENAI_API_KEY"] = openai_key_input
-
     st.markdown(
         "<p style='color:#30363d; font-size:11px; margin-top:20px; text-align:center;'>"
         "v1.0.0 · Built for Hackathon 2024<br>"
