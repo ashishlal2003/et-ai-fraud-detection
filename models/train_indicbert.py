@@ -132,8 +132,9 @@ def main():
     train_ds = train_ds.map(lambda x: tokenize_fn(x, tokenizer), batched=True, batch_size=256)
     test_ds = test_ds.map(lambda x: tokenize_fn(x, tokenizer), batched=True, batch_size=256)
 
-    train_ds.set_format(type="torch", columns=["input_ids", "attention_mask", "token_type_ids", "label"])
-    test_ds.set_format(type="torch", columns=["input_ids", "attention_mask", "token_type_ids", "label"])
+    format_columns = [c for c in ["input_ids", "attention_mask", "token_type_ids", "label"] if c in train_ds.column_names]
+    train_ds.set_format(type="torch", columns=format_columns)
+    test_ds.set_format(type="torch", columns=format_columns)
 
     print(f"\nLoading model from '{MODEL_NAME}' ...")
     model = AutoModelForSequenceClassification.from_pretrained(
@@ -153,7 +154,7 @@ def main():
         weight_decay=0.01,
         logging_dir=str(LOG_DIR),
         logging_steps=50,
-        evaluation_strategy="epoch",
+        eval_strategy="epoch",
         save_strategy="epoch",
         load_best_model_at_end=True,
         metric_for_best_model="f1",
@@ -168,7 +169,7 @@ def main():
         args=training_args,
         train_dataset=train_ds,
         eval_dataset=test_ds,
-        tokenizer=tokenizer,
+        processing_class=tokenizer,
         compute_metrics=compute_metrics,
         callbacks=[EarlyStoppingCallback(early_stopping_patience=2)],
     )
