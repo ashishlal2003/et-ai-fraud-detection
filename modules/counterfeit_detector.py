@@ -8,40 +8,43 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Optional
 
-MODEL_PATH = Path(__file__).parent.parent / "models" / "efficientnet_currency.pth"
+MODEL_PATH  = Path(__file__).parent.parent / "models" / "efficientnet_currency.pth"
+HF_REPO_ID  = "ashishlal2003/safenet-efficientnet-currency"
+HF_FILENAME = "efficientnet_currency.pth"
 
 # Class mapping: index → label
 CLASS_LABELS = {0: "FAKE", 1: "REAL"}
 NUM_CLASSES = 2
 
 
+def _get_model_path() -> str:
+    if MODEL_PATH.exists():
+        print(f"[CounterfeitDetector] Using local model: {MODEL_PATH}")
+        return str(MODEL_PATH)
+    print("[CounterfeitDetector] Local model not found — downloading from HF...")
+    from huggingface_hub import hf_hub_download  # type: ignore
+    path = hf_hub_download(repo_id=HF_REPO_ID, filename=HF_FILENAME)
+    print(f"[CounterfeitDetector] Downloaded to: {path}")
+    return path
+
+
 def load_model() -> Optional[object]:
-    """
-    Load fine-tuned EfficientNet-B0 from models/efficientnet_currency.pth.
-
-    Returns:
-        PyTorch model in eval mode, or None if file not found.
-    """
-    if not MODEL_PATH.exists():
-        print(f"[CounterfeitDetector] Model not found at {MODEL_PATH}. Running in demo mode.")
-        return None
-
     try:
         import torch  # type: ignore
-        import torchvision.models as models  # type: ignore
-
-        model = models.efficientnet_b0(weights=None)
-        # Replace classifier head for binary classification
-        in_features = model.classifier[1].in_features
+        import torchvision.models as tv_models  # type: ignore
         import torch.nn as nn  # type: ignore
+
+        model = tv_models.efficientnet_b0(weights=None)
+        in_features = model.classifier[1].in_features
         model.classifier[1] = nn.Linear(in_features, NUM_CLASSES)
 
-        checkpoint = torch.load(str(MODEL_PATH), map_location="cpu")
+        path = _get_model_path()
+        checkpoint = torch.load(path, map_location="cpu")
         state_dict = checkpoint["model_state_dict"] if "model_state_dict" in checkpoint else checkpoint
         model.load_state_dict(state_dict)
         model.eval()
 
-        print(f"[CounterfeitDetector] Model loaded from {MODEL_PATH}")
+        print("[CounterfeitDetector] Model ready")
         return model
 
     except Exception as exc:

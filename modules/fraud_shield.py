@@ -19,28 +19,25 @@ LABEL_DISPLAY = {
     "safe": "Safe Message",
 }
 
-MODEL_DIR = Path(__file__).parent.parent / "models" / "indicbert_fraud"
+MODEL_DIR  = Path(__file__).parent.parent / "models" / "indicbert_fraud"
+HF_REPO_ID = "ashishlal2003/safenet-indicbert-fraud"
 
 
 def load_model() -> tuple[Optional[object], Optional[object]]:
-    """
-    Load IndicBERT model and tokenizer from models/indicbert_fraud/.
-
-    Returns:
-        Tuple of (model, tokenizer). Both are None if model directory doesn't exist.
-    """
-    if not MODEL_DIR.exists():
-        print(f"[FraudShield] Model directory not found: {MODEL_DIR}. Running in demo mode.")
-        return None, None
-
     try:
         from transformers import AutoModelForSequenceClassification, AutoTokenizer  # type: ignore
-        import torch  # type: ignore
 
-        tokenizer = AutoTokenizer.from_pretrained(str(MODEL_DIR))
-        model = AutoModelForSequenceClassification.from_pretrained(str(MODEL_DIR))
+        if MODEL_DIR.exists():
+            source = str(MODEL_DIR)
+            print(f"[FraudShield] Loading from local path: {source}")
+        else:
+            source = HF_REPO_ID
+            print(f"[FraudShield] Local model not found — downloading from HF: {source}")
+
+        tokenizer = AutoTokenizer.from_pretrained(source)
+        model = AutoModelForSequenceClassification.from_pretrained(source)
         model.eval()
-        print(f"[FraudShield] Model loaded from {MODEL_DIR}")
+        print("[FraudShield] Model ready")
         return model, tokenizer
 
     except Exception as exc:
