@@ -16,12 +16,8 @@ Indian Digital Public Safety — Streamlit multi-tab application.
 git clone <repo-url>
 cd fraud-shield
 pip install -r requirements.txt
-cp .env.example .env
-# Edit .env and add your OPENAI_API_KEY
-streamlit run app.py
+streamlit run Home.py
 ```
-
-The app runs in demo mode (no trained models required). Add your OpenAI key for GPT-4.1 explanations.
 
 ## Model Training
 
