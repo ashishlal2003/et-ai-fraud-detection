@@ -198,7 +198,7 @@ def main():
     model = build_model(num_classes=2).to(device)
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=LR)
-    scheduler = ReduceLROnPlateau(optimizer, mode="max", factor=0.5, patience=2, verbose=True)
+    scheduler = ReduceLROnPlateau(optimizer, mode="max", factor=0.5, patience=2)
 
     best_val_acc = 0.0
     history = []

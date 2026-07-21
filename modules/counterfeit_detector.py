@@ -36,7 +36,8 @@ def load_model() -> Optional[object]:
         import torch.nn as nn  # type: ignore
         model.classifier[1] = nn.Linear(in_features, NUM_CLASSES)
 
-        state_dict = torch.load(str(MODEL_PATH), map_location="cpu")
+        checkpoint = torch.load(str(MODEL_PATH), map_location="cpu")
+        state_dict = checkpoint["model_state_dict"] if "model_state_dict" in checkpoint else checkpoint
         model.load_state_dict(state_dict)
         model.eval()
 

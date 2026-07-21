@@ -145,7 +145,8 @@ def generate_synthetic_data() -> dict:
     for i, name in enumerate(_SCAMMER_NAMES):
         nid = f"scammer_{i}"
         scammer_ids.append(nid)
-        phone = _rand_phone()
+        # scammer_1 has a fixed demo phone matching synthetic_fraud_network.py
+        phone = "+91-98765-43210" if i == 1 else _rand_phone()
         compound = compound_ids[i % len(compound_ids)]
         nodes.append({
             "id": nid,
@@ -633,18 +634,11 @@ def render_streamlit_tab(openai_client=None) -> None:
         unsafe_allow_html=True,
     )
 
-    # Provide a default demo number from the data for easy testing
-    demo_phone = ""
-    for _, attrs in G.nodes(data=True):
-        if attrs.get("type") == "scammer" and attrs.get("phone"):
-            demo_phone = attrs["phone"]
-            break
-
     col_input, col_btn = st.columns([4, 1])
     with col_input:
         phone_input = st.text_input(
             "Enter phone number",
-            placeholder=f"e.g. {demo_phone}",
+            placeholder="e.g. +91-98765-43210",
             label_visibility="collapsed",
         )
     with col_btn:

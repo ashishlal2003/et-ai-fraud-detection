@@ -169,7 +169,8 @@ def build_scammers(compound_nodes):
     for i in range(1, 21):
         name = random_name()
         node_id = f"scammer_{i}"
-        phone = random_phone()
+        # scammer_1 has a fixed demo phone so the UI placeholder is always usable
+        phone = "+91-98765-43210" if i == 1 else random_phone()
         compound = random.choice(compound_ids)
         # Pick state matching compound
         compound_state = next(c["state"] for c in compound_nodes if c["id"] == compound)
