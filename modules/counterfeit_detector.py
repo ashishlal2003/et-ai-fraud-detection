@@ -5,8 +5,12 @@ Uses EfficientNet-B0 fine-tuned on Indian currency note images.
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 from typing import Optional
+
+# Prevent torch dynamo deadlock on Python 3.14 (Streamlit Cloud)
+os.environ.setdefault("TORCH_DISABLE_DYNAMO", "1")
 
 MODEL_PATH  = Path(__file__).parent.parent / "models" / "efficientnet_currency.pth"
 HF_REPO_ID  = "ashishlal2003/safenet-efficientnet-currency"
